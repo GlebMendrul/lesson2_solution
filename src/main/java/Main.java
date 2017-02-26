@@ -12,6 +12,7 @@ import java.util.List;
  * Created by gleb on 25.11.15.
  */
 public class Main {
+
     public static void main(String[] args) throws InterruptedException {
         Storage storage = getStorage();
         IOrderDAO orderDAO = new OrderDAO();
@@ -19,14 +20,10 @@ public class Main {
         OrderService service = new OrderService(orderDAO);
 
         List<Order> sortedOrders = service.getSortedOrders();
-        for (Order sortedOrder : sortedOrders) {
-            System.out.println(sortedOrder);
-        }
-
-
+        sortedOrders.forEach(System.out::println);
     }
 
-    public static Storage getStorage() throws InterruptedException {
+    private static Storage getStorage() throws InterruptedException {
         Storage storage = new Storage();
         List<Order> orders = new ArrayList<Order>();
         for (int i = 0; i < 10; i++) {

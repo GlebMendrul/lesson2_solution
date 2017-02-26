@@ -3,10 +3,7 @@ package services;
 import dao.IOrderDAO;
 import domains.Order;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by gleb on 25.11.15.
@@ -19,7 +16,7 @@ public class OrderService {
         this.orderDAO = orderDAO;
     }
 
-    public Order getById(String orderId) {
+    public Optional<Order> getById(String orderId) {
         return orderDAO.getById(orderId);
     }
 

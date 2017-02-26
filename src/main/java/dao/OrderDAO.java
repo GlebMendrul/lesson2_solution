@@ -1,74 +1,48 @@
 package dao;
 
 import domains.Order;
+import lombok.Getter;
+import lombok.Setter;
 import util.Storage;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by gleb on 25.11.15.
  */
 public class OrderDAO implements IOrderDAO {
 
+    @Getter
+    @Setter
     private Storage storage;
 
-    public Order getById(String orderId) {
+    public Optional<Order> getById(String orderId) {
         List<Order> orders = storage.getOrders();
-        for (Order order : orders) {
-            if (order.getOrderId().equals(orderId)) {
-                return order;
-            }
-        }
-        return null;
+        return orders.stream().filter(order -> order.getOrderId().equals(orderId)).findFirst();
     }
 
     public List<Order> getOlderThanDate(Date date) {
         List<Order> orders = storage.getOrders();
-        List<Order> result = new ArrayList<Order>();
-        for (Order order : orders) {
-            if (order.getPurchaseDate().after(date)) {
-                result.add(order);
-            }
-        }
-        return result;
+        return orders.stream().filter(order -> order.getPurchaseDate().after(date)).collect(toList());
     }
 
     public Map<Date, List<Order>> getOrdersByDate() {
         List<Order> orders = storage.getOrders();
-        Map<Date, List<Order>> result = new HashMap<Date, List<Order>>();
-        for (Order order : orders) {
-            if (result.containsKey(order.getPurchaseDate())) {
-                result.get(order.getPurchaseDate()).add(order);
-            } else {
-                List<Order> t = new ArrayList<Order>();
-                t.add(order);
-                result.put(order.getPurchaseDate(), t);
-            }
-        }
-        return result;
+        return orders.stream().collect(groupingBy(Order::getPurchaseDate));
     }
 
     public Set<Order> getUniqueOrders() {
         List<Order> orders = storage.getOrders();
-        return new HashSet<Order>(orders);
+        return new HashSet<>(orders);
     }
 
     public List<Order> getSortedOrders() {
         List<Order> orders = storage.getOrders();
-        Collections.sort(orders, new Comparator<Order>() {
-            public int compare(Order o1, Order o2) {
-                return o1.getPurchaseDate().compareTo(o2.getPurchaseDate());
-            }
-        });
+        orders.sort(Comparator.comparing(Order::getPurchaseDate));
         return orders;
-    }
-
-    public Storage getStorage() {
-        return storage;
-    }
-
-    public void setStorage(Storage storage) {
-        this.storage = storage;
     }
 
 }
